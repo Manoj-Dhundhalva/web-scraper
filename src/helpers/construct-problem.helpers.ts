@@ -22,7 +22,7 @@ export function constructProblem(html: string) {
       .map((_, el) => $(el).text().trim())
       .get()
       .join(" "),
-    inputTestCase: $(".problem-statement .sample-test .input pre")
+    inputTestCase: $(".problem-statement .sample-test .input pre .test-example-line")
       .map((_, el) => $(el).text().trim())
       .get()
       .join("\n"),

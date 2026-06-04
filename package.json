@@ -7,7 +7,7 @@
     "build": "tsc && tsc-alias",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "start": "bash scripts/bootstrap.sh",
+    "start": "tsx src/index.ts",
     "prepare": "husky"
   },
   "keywords": [],
