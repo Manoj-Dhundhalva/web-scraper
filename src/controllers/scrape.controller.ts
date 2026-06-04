@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import { webScraper } from "@/services/web-scraper.service.js";
-import { htmlToJson } from "@/helpers/html-parser.js";
 import type { TScrapeBody } from "@/schemas/scrape.schema.js";
+import { constructProblem } from "@/helpers/construct-problem.helpers.js";
 
 export async function scrapeController(req: Request<object, unknown, TScrapeBody>, res: Response, next: NextFunction) {
   const { urls } = req.body;
@@ -10,18 +10,23 @@ export async function scrapeController(req: Request<object, unknown, TScrapeBody
     const settled = await Promise.allSettled(
       urls.map(async (url) => {
         const html = await webScraper.getHtml(url);
-        const parsed = htmlToJson(html);
-        return { url, parsed };
+        return { url, html };
       }),
     );
 
     const results = settled.map((result, i) =>
       result.status === "fulfilled"
-        ? { url: urls[i], status: "success", parsed: result.value.parsed }
+        ? { url: urls[i], status: "success", html: result.value.html }
         : { url: urls[i], status: "error", error: result.reason?.message },
     );
 
-    res.status(200).json({ data: results });
+    const data = results.map((result) => {
+      if (result.status === "error") return { url: result.url, error: result.error };
+      if (!result.html) return { url: result.url };
+      return { url: result.url, ...constructProblem(result.html) };
+    });
+
+    res.status(200).json({ problems: data });
   } catch (error) {
     next(error);
   } finally {
