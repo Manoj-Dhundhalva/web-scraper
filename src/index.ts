@@ -5,5 +5,4 @@ app.get("/", (_, res) => res.send("Hello, World!"));
 
 app.listen(env.PORT, () => {
   console.log(`Server running on port ${env.PORT}`);
-  console.log(`Environment: ${env.APP_STAGE}`);
 });

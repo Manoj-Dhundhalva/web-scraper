@@ -22,11 +22,11 @@ export function constructProblem(html: string) {
       .map((_, el) => $(el).text().trim())
       .get()
       .join(" "),
-    inputTestCase: $(".problem-statement .sample-test .input .test-example-line")
+    inputTestCase: $(".problem-statement .sample-test .input pre")
       .map((_, el) => $(el).text().trim())
       .get()
       .join("\n"),
-    outputTestCase: $(".problem-statement .sample-test .input .test-example-line")
+    outputTestCase: $(".problem-statement .sample-test .output pre")
       .map((_, el) => $(el).text().trim())
       .get()
       .join("\n"),

@@ -1,7 +1,14 @@
-import z from "zod";
+import { z } from "zod";
 
 export const scrapeSchema = z.object({
-  urls: z.array(z.url()).min(1),
+  problems: z
+    .array(
+      z.object({
+        contestId: z.number(),
+        problemIndex: z.string().length(1),
+      }),
+    )
+    .min(1),
 });
 
 export type TScrapeBody = z.infer<typeof scrapeSchema>;

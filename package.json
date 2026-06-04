@@ -7,9 +7,7 @@
     "build": "tsc && tsc-alias",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "start:test": "bash scripts/test.sh",
-    "start:staging": "bash scripts/staging.sh",
-    "start:prod": "bash scripts/prod.sh",
+    "start": "bash scripts/bootstrap.sh",
     "prepare": "husky"
   },
   "keywords": [],
@@ -42,6 +40,7 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.5.2",
     "morgan": "^1.11.0",
     "playwright": "^1.60.0",
     "zod": "^4.4.3"

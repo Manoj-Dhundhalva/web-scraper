@@ -3,10 +3,11 @@ import morgan from "morgan";
 import cors from "cors";
 
 import router from "@/routes/index.js";
-import { errorHandler } from "@/middlewares/index.js";
+import { errorHandler, limiter } from "@/middlewares/index.js";
 
 const app = express();
 
+app.use(limiter);
 app.use(morgan("dev"));
 app.use(cors());
 app.use(express.json());

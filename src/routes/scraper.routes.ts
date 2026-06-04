@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { validateBody } from "@/middlewares/validation.js";
+import { validateBody } from "@/middlewares/validation.middleware.js";
 import { scrapeSchema } from "@/schemas/scrape.schema.js";
 import { scrapeController } from "@/controllers/scrape.controller.js";
 
