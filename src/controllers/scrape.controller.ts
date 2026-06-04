@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { webScraper } from "@/services/web-scraper.service.js";
-import { htmlToJson } from "@/helpers/parser.js";
+import { htmlToJson } from "@/helpers/html-parser.js";
 import type { TScrapeBody } from "@/schemas/scrape.schema.js";
 
 export async function scrapeController(req: Request<object, unknown, TScrapeBody>, res: Response, next: NextFunction) {
