@@ -21,12 +21,12 @@ class WebScraperService {
           const page = await context.newPage();
 
           try {
-            await page.goto(url, {
+            const response = await page.goto(url, {
               waitUntil: "domcontentloaded",
               timeout: 30_000,
             });
 
-            return await page.content();
+            return (await response?.text()) ?? "";
           } finally {
             await page.close();
           }

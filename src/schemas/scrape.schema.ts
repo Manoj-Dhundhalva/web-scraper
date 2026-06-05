@@ -5,7 +5,7 @@ export const scrapeSchema = z.object({
     .array(
       z.object({
         contestId: z.number(),
-        problemIndex: z.string().length(1),
+        problemIndex: z.string(),
       }),
     )
     .min(1),
