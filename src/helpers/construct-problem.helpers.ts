@@ -14,22 +14,40 @@ export function constructProblem(html: string) {
       .map((_, el) => $(el).text().trim())
       .get()
       .join(" "),
-    inputSpecification: $(".problem-statement .input-specification p")
-      .map((_, el) => $(el).text().trim())
-      .get()
-      .join(" "),
-    outputSpecification: $(".problem-statement .output-specification p")
-      .map((_, el) => $(el).text().trim())
-      .get()
-      .join(" "),
-    inputTestCase: $(".problem-statement .sample-test .input pre .test-example-line")
-      .map((_, el) => $(el).text().trim())
-      .get()
-      .join("\n"),
-    outputTestCase: $(".problem-statement .sample-test .output pre")
-      .map((_, el) => $(el).text().trim())
-      .get()
-      .join("\n"),
+    specification: {
+      input: $(".problem-statement .input-specification p")
+        .map((_, el) => $(el).text().trim())
+        .get()
+        .join(" "),
+      output: $(".problem-statement .output-specification p")
+        .map((_, el) => $(el).text().trim())
+        .get()
+        .join(" "),
+    },
+    testCase: {
+      input: $(".problem-statement .sample-test .input pre")
+        .map((_, el) =>
+          $(el)
+            .contents()
+            .map((_, node) => $(node).text().trim())
+            .get()
+            .filter(Boolean)
+            .join("\n"),
+        )
+        .get()
+        .join("\n"),
+      output: $(".problem-statement .sample-test .output pre")
+        .map((_, el) =>
+          $(el)
+            .contents()
+            .map((_, node) => $(node).text().trim())
+            .get()
+            .filter(Boolean)
+            .join("\n"),
+        )
+        .get()
+        .join("\n"),
+    },
     note: $(".problem-statement .note")
       .map((_, el) => $(el).text().trim())
       .get()
