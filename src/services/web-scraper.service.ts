@@ -1,4 +1,4 @@
-import { type Browser, chromium } from "playwright";
+import { chromium, type Browser } from "playwright";
 
 class WebScraperService {
   private browserPromise: Promise<Browser> | null = null;
@@ -11,19 +11,29 @@ class WebScraperService {
     return this.browserPromise;
   }
 
-  async getHtml(url: string): Promise<string> {
+  async getHtmlPages(urls: string[]): Promise<string[]> {
     const browser = await this.getBrowser();
-    const page = await browser.newPage();
+    const context = await browser.newContext();
 
     try {
-      await page.goto(url, {
-        waitUntil: "domcontentloaded",
-        timeout: 30_000,
-      });
+      return await Promise.all(
+        urls.map(async (url) => {
+          const page = await context.newPage();
 
-      return await page.content();
+          try {
+            await page.goto(url, {
+              waitUntil: "domcontentloaded",
+              timeout: 30_000,
+            });
+
+            return await page.content();
+          } finally {
+            await page.close();
+          }
+        }),
+      );
     } finally {
-      await page.close();
+      await context.close();
     }
   }
 

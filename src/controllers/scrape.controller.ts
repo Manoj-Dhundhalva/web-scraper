@@ -3,44 +3,21 @@ import { webScraper } from "@/services/web-scraper.service.js";
 import type { TScrapeBody } from "@/schemas/scrape.schema.js";
 import { constructProblem } from "@/helpers/construct-problem.helpers.js";
 
-const getProblemUrl = (contestId?: number, problemIndex?: string) => {
-  if (contestId == null || problemIndex == null) return "";
-  return `https://codeforces.com/problemset/problem/${contestId}/${problemIndex}`;
-};
+const getProblemUrl = (contestId: number, problemIndex: string) =>
+  `https://codeforces.com/problemset/problem/${contestId}/${problemIndex}`;
 
 export async function scrapeController(req: Request<object, unknown, TScrapeBody>, res: Response, next: NextFunction) {
-  const { problems } = req.body;
-
   try {
-    const settled = await Promise.allSettled(
-      problems.map(async (problem) => {
-        const url = getProblemUrl(problem.contestId, problem.problemIndex);
-        const html = await webScraper.getHtml(url);
-        return { url, html };
-      }),
-    );
+    const problemUrls = req.body.problems.map((problem) => getProblemUrl(problem.contestId, problem.problemIndex));
 
-    const results = settled.map((result, i) =>
-      result.status === "fulfilled"
-        ? {
-            url: getProblemUrl(problems[i]?.contestId, problems[i]?.problemIndex),
-            status: "success",
-            html: result.value.html,
-          }
-        : {
-            url: getProblemUrl(problems[i]?.contestId, problems[i]?.problemIndex),
-            status: "error",
-            error: result.reason?.message,
-          },
-    );
+    const htmlPages = await webScraper.getHtmlPages(problemUrls);
 
-    const data = results.map((result) => {
-      if (result.status === "error") return { url: result.url, error: result.error };
-      if (!result.html) return { url: result.url };
-      return { url: result.url, ...constructProblem(result.html) };
-    });
+    const problems = htmlPages.map((htmlPage, i) => ({
+      url: problemUrls[i],
+      ...constructProblem(htmlPage),
+    }));
 
-    res.status(200).json({ problems: data });
+    res.status(200).json({ problems });
   } catch (error) {
     next(error);
   } finally {
