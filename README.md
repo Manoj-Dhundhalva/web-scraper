@@ -53,18 +53,7 @@ Scrapes Codeforces problem statements and returns structured problem data.
 }
 ```
 
-### Fields
-
-| Field          | Type     | Description                                     |
-| -------------- | -------- | ----------------------------------------------- |
-| `contestId`    | `number` | Codeforces contest ID                           |
-| `problemIndex` | `string` | Problem letter/index (e.g. `A`, `B`, `C`, `D1`) |
-
----
-
-## Success Response
-
-**Status:** `200 OK`
+## Response
 
 ```json
 {
