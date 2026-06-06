@@ -1,11 +1,11 @@
-import { chromium, type Browser } from "playwright";
+import { webkit, type Browser } from "playwright";
 
 class WebScraperService {
   private browserPromise: Promise<Browser> | null = null;
 
   private async getBrowser(): Promise<Browser> {
     if (!this.browserPromise) {
-      this.browserPromise = chromium.launch({ headless: false });
+      this.browserPromise = webkit.launch({ headless: true });
     }
 
     return this.browserPromise;
@@ -13,7 +13,7 @@ class WebScraperService {
 
   async getHtmlPages(urls: string[]): Promise<string[]> {
     const browser = await this.getBrowser();
-    const context = await browser.newContext();
+    const context = await browser.newContext({ locale: "en-US" });
 
     try {
       return await Promise.all(
