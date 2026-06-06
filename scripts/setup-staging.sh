@@ -18,7 +18,7 @@ npm cache clean --force
 echo "Installing dependencies..."
 yarn install
 
-echo "Installing Playwright Firefox..."
-yarn playwright install firefox
+echo "Installing Playwright browsers..."
+yarn playwright install
 
 echo "Done."
