@@ -11,7 +11,6 @@
     "setup:staging": "bash scripts/setup-staging.sh",
     "start:prod": "bash scripts/prod.sh",
     "start:staging": "bash scripts/staging.sh",
-    "postinstall": "playwright install chromium",
     "prepare": "husky"
   },
   "keywords": [],
