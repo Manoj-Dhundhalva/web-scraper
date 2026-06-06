@@ -10,28 +10,30 @@ class WebScraperService {
 
   private readonly IDLE_TIMEOUT = 5 * 60 * 1000; // 5 min
 
-  private async getContext(): Promise<BrowserContext> {
-    if (this.idleTimer) {
-      clearTimeout(this.idleTimer);
-      this.idleTimer = null;
-    }
-
+  private async getBrowser(): Promise<Browser> {
     if (!this.browser) {
       console.log("Launching browser...");
       this.browser = await chromium.launch({ headless: true });
     }
 
+    return this.browser;
+  }
+
+  private async getContext(): Promise<BrowserContext> {
     if (!this.context) {
+      const browser = await this.getBrowser();
       console.log("Creating browser context...");
-      this.context = await this.browser.newContext({ locale: "en-US" });
+      this.context = await browser.newContext({ locale: "en-US" });
     }
 
     return this.context;
   }
 
-  private resetIdleTimer(): void {
-    if (this.activeRequests > 0) return;
+  async init() {
+    await this.getContext();
+  }
 
+  private resetIdleTimer(): void {
     if (this.idleTimer) clearTimeout(this.idleTimer);
 
     this.idleTimer = setTimeout(() => {
@@ -59,9 +61,7 @@ class WebScraperService {
   }
 
   async close(): Promise<void> {
-    if (this.activeRequests > 0) return;
-
-    console.log("Closing browser due to inactivity...");
+    console.log("Closing browser...");
 
     if (this.idleTimer) {
       clearTimeout(this.idleTimer);
