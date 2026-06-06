@@ -1,11 +1,11 @@
-import { webkit, type Browser } from "playwright";
+import { firefox, type Browser } from "playwright";
 
 class WebScraperService {
   private browserPromise: Promise<Browser> | null = null;
 
   private async getBrowser(): Promise<Browser> {
     if (!this.browserPromise) {
-      this.browserPromise = webkit.launch({ headless: true });
+      this.browserPromise = firefox.launch({ headless: true });
     }
 
     return this.browserPromise;
