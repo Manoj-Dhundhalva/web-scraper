@@ -10,6 +10,7 @@
     "setup:prod": "bash scripts/setup-prod.sh",
     "setup:staging": "bash scripts/setup-staging.sh",
     "start": "tsx src/index.ts",
+    "postinstall": "playwright install chromium",
     "prepare": "husky"
   },
   "keywords": [],
