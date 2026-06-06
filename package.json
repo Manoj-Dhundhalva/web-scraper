@@ -7,7 +7,8 @@
     "build": "tsc && tsc-alias",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "setup": "bash scripts/setup.sh",
+    "setup:prod": "bash scripts/setup-prod.sh",
+    "setup:staging": "bash scripts/setup-staging.sh",
     "start": "tsx src/index.ts",
     "prepare": "husky"
   },
