@@ -1,3 +1,4 @@
+import env from "@/config/env.js";
 import type { TScrapeTask } from "@/schemas/scrape.schema.js";
 import { chromium, type Browser, type BrowserContext } from "playwright";
 
@@ -8,7 +9,7 @@ class WebScraperService {
   private idleTimer: NodeJS.Timeout | null = null;
   private activeRequests = 0;
 
-  private readonly IDLE_TIMEOUT = 5 * 60 * 1000; // 5 min
+  private readonly IDLE_TIMEOUT = env.BROWSER_IDLE_TIMEOUT;
 
   private async getBrowser(): Promise<Browser> {
     if (!this.browser) {

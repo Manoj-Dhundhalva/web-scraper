@@ -9,8 +9,18 @@ process.env.APP_STAGE = process.env.APP_STAGE || APP_STAGE.STAGING;
 
 const envSchema = z.object({
   APP_STAGE: z.enum([APP_STAGE.PROD, APP_STAGE.STAGING]).default(APP_STAGE.STAGING),
+
   PORT: z.coerce.number().positive().default(3000),
-  RATE_LIMIT_WINDOW: z.coerce.number().positive().default(60000),
+
+  BROWSER_IDLE_TIMEOUT: z.coerce
+    .number()
+    .positive()
+    .default(5 * 60 * 1000), // 5 min
+
+  RATE_LIMIT_WINDOW: z.coerce
+    .number()
+    .positive()
+    .default(60 * 1000), // 1 min
 });
 
 const result = envSchema.safeParse(process.env);
