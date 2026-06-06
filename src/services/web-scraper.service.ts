@@ -1,48 +1,78 @@
-import { chromium, type Browser } from "playwright";
+import type { TScrapeTask } from "@/schemas/scrape.schema.js";
+import { chromium, type Browser, type BrowserContext } from "playwright";
 
 class WebScraperService {
-  private browserPromise: Promise<Browser> | null = null;
+  private browser: Browser | null = null;
+  private context: BrowserContext | null = null;
 
-  private async getBrowser(): Promise<Browser> {
-    if (!this.browserPromise) {
-      this.browserPromise = chromium.launch({ headless: true });
+  private idleTimer: NodeJS.Timeout | null = null;
+  private activeRequests = 0;
+
+  private readonly IDLE_TIMEOUT = 5 * 60 * 1000; // 5 min
+
+  private async getContext(): Promise<BrowserContext> {
+    if (this.idleTimer) {
+      clearTimeout(this.idleTimer);
+      this.idleTimer = null;
     }
 
-    return this.browserPromise;
+    if (!this.browser) {
+      console.log("Launching browser...");
+      this.browser = await chromium.launch({ headless: true });
+    }
+
+    if (!this.context) {
+      console.log("Creating browser context...");
+      this.context = await this.browser.newContext({ locale: "en-US" });
+    }
+
+    return this.context;
   }
 
-  async getHtmlPages(urls: string[]): Promise<string[]> {
-    const browser = await this.getBrowser();
-    const context = await browser.newContext({ locale: "en-US" });
+  private resetIdleTimer(): void {
+    if (this.activeRequests > 0) return;
+
+    if (this.idleTimer) clearTimeout(this.idleTimer);
+
+    this.idleTimer = setTimeout(() => {
+      void this.close();
+    }, this.IDLE_TIMEOUT);
+  }
+
+  async getHtmlPage({ url, timeout }: TScrapeTask): Promise<string> {
+    this.activeRequests++;
 
     try {
-      return await Promise.all(
-        urls.map(async (url) => {
-          const page = await context.newPage();
+      const context = await this.getContext();
+      const page = await context.newPage();
 
-          try {
-            const response = await page.goto(url, {
-              waitUntil: "domcontentloaded",
-              timeout: 30_000,
-            });
-
-            return (await response?.text()) ?? "";
-          } finally {
-            await page.close();
-          }
-        }),
-      );
+      try {
+        await page.goto(url, { waitUntil: "domcontentloaded", timeout });
+        return await page.content();
+      } finally {
+        await page.close();
+      }
     } finally {
-      await context.close();
+      this.activeRequests--;
+      if (this.activeRequests === 0) this.resetIdleTimer();
     }
   }
 
   async close(): Promise<void> {
-    if (!this.browserPromise) return;
+    if (this.activeRequests > 0) return;
 
-    const browser = await this.browserPromise;
-    await browser.close();
-    this.browserPromise = null;
+    console.log("Closing browser due to inactivity...");
+
+    if (this.idleTimer) {
+      clearTimeout(this.idleTimer);
+      this.idleTimer = null;
+    }
+
+    await this.context?.close();
+    await this.browser?.close();
+
+    this.context = null;
+    this.browser = null;
   }
 }
 

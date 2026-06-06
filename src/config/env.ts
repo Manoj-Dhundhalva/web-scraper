@@ -1,6 +1,14 @@
 import { z } from "zod";
 
+export const APP_STAGE = {
+  STAGING: "staging",
+  PROD: "prod",
+} as const;
+
+process.env.APP_STAGE = process.env.APP_STAGE || APP_STAGE.STAGING;
+
 const envSchema = z.object({
+  APP_STAGE: z.enum([APP_STAGE.PROD, APP_STAGE.STAGING]).default(APP_STAGE.STAGING),
   PORT: z.coerce.number().positive().default(3000),
   RATE_LIMIT_WINDOW: z.coerce.number().positive().default(60000),
 });
@@ -26,5 +34,8 @@ if (!result.success) {
 export const env = result.data;
 
 export type Env = typeof env;
+
+export const isProdEnv = () => env.APP_STAGE === APP_STAGE.PROD;
+export const isDevEnv = () => env.APP_STAGE === APP_STAGE.STAGING;
 
 export default env;
