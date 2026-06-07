@@ -8,6 +8,7 @@ import { isProdEnv } from "./config/env.js";
 
 const app = express();
 
+app.set("trust proxy", 1);
 app.use(limiter);
 app.use(morgan(isProdEnv() ? "combined" : "dev"));
 app.use(cors());
