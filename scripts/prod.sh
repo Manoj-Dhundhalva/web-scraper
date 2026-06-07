@@ -4,8 +4,8 @@ set -e
 
 export APP_STAGE=prod
 
-echo "Installing Playwright Chromium..."
-yarn playwright install chromium
+echo "Installing Playwright Firefox..."
+yarn playwright install firefox
 
 echo "Starting the server..."
 tsx src/index.ts

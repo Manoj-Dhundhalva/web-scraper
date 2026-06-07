@@ -1,6 +1,6 @@
 import env from "@/config/env.js";
 import type { TScrapeTask } from "@/schemas/scrape.schema.js";
-import { chromium, type Browser, type BrowserContext } from "playwright";
+import { firefox, type Browser, type BrowserContext } from "playwright";
 
 class WebScraperService {
   private browser: Browser | null = null;
@@ -14,7 +14,7 @@ class WebScraperService {
   private async getBrowser(): Promise<Browser> {
     if (!this.browser) {
       console.log("Launching browser...");
-      this.browser = await chromium.launch({ headless: true });
+      this.browser = await firefox.launch({ headless: true });
     }
 
     return this.browser;
