@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const scrapeTaskSchema = z.object({
   url: z.url(),
-  timeout: z.number().int().positive().default(30000),
+  timeout: z.number().int().positive().default(60000),
 });
 
 export type TScrapeTask = z.infer<typeof scrapeTaskSchema>;

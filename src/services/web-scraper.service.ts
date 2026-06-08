@@ -50,8 +50,16 @@ class WebScraperService {
       const page = await context.newPage();
 
       try {
-        await page.goto(url, { waitUntil: "domcontentloaded", timeout });
-        return await page.content();
+        const response = await page.goto(url, { waitUntil: "domcontentloaded", timeout });
+
+        if (response?.headers()["content-type"]?.includes("text/html")) {
+          return await page.content();
+        }
+
+        return "";
+      } catch (error) {
+        console.log("Error while fetching html", error);
+        return "";
       } finally {
         await page.close();
       }
