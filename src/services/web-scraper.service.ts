@@ -53,7 +53,9 @@ class WebScraperService {
         const response = await page.goto(url, { waitUntil: "domcontentloaded", timeout });
 
         if (response?.headers()["content-type"]?.includes("text/html")) {
-          return await page.content();
+          const htmlPage = await page.content();
+          console.log("[HIT]: ", url, htmlPage.length);
+          return htmlPage;
         }
 
         return "";
